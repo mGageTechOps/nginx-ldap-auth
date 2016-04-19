@@ -10,6 +10,8 @@
 # 2) accepts POST requests on /login, sets a cookie, and responds with redirect
 
 import sys, os, signal, base64, Cookie, cgi, urlparse
+from simplecrypt import encrypt
+
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 Listen = ('localhost', 9000)
@@ -59,7 +61,7 @@ class AppHandler(BaseHTTPRequestHandler):
         <tr>
           <td>Username: <input type="text" name="username"/></td>
         <tr>
-          <td>Password: <input type="text" name="password"/></td>
+          <td>Password: <input type="password" name="password"/></td>
         <tr>
           <td><input type="submit" value="Login"></td>
       </table>
@@ -103,7 +105,8 @@ class AppHandler(BaseHTTPRequestHandler):
             # and share a key with auth daemon that extracts this information
             #
             # WARNING WARNING WARNING
-            enc = base64.b64encode(user + ':' + passwd)
+            enc = encrypt('password',user + ':' + passwd)
+            enc = base64.b64encode(enc)
             self.send_header('Set-Cookie', 'nginxauth=' + enc + '; httponly')
 
             self.send_header('Location', target)

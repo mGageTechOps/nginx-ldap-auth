@@ -6,6 +6,7 @@
 
 import sys, os, signal, base64, ldap, Cookie
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from simplecrypt import decrypt
 
 Listen = ('localhost', 8888)
 #Listen = "/tmp/auth.sock"    # Also uncomment lines in 'Requests are
@@ -71,6 +72,7 @@ class AuthHandler(BaseHTTPRequestHandler):
 
         try:
             auth_decoded = base64.b64decode(auth_header[6:])
+            auth_decoded = decrypt('password',auth_decoded)
             user, passwd = auth_decoded.split(':', 2)
 
         except:
